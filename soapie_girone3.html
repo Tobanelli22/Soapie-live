@@ -6,11 +6,18 @@
 <title>Classifica Girone 1</title>
 <style>
   body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: #FFF0F7; }
+  .table-wrap { width: 100%; overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; font-size: 14px; }
-  th, td { border: 1px solid #ffb6d9; padding: 6px 8px; text-align: center; }
+  th, td { border: 1px solid #ffb6d9; padding: 6px 8px; text-align: center; white-space: nowrap; }
   th { background-color: #E0218A; color: white; }
   tr:nth-child(even) { background-color: #FFE4F1; }
   .updated { font-size: 11px; color: #888; text-align: right; margin-top: 6px; }
+
+  @media (max-width: 480px) {
+    body { padding: 4px; font-size: 12px; }
+    table { font-size: 11px; }
+    th, td { padding: 4px 5px; white-space: normal; }
+  }
 </style>
 </head>
 <body>
@@ -25,7 +32,7 @@
 
   function buildTable(values) {
     if (!values || values.length === 0) return "<p>Nessun dato disponibile.</p>";
-    let html = "<table>";
+    let html = "<div class=\"table-wrap\"><table>";
     values.forEach((row, i) => {
       html += "<tr>";
       row.forEach(cell => {
@@ -34,7 +41,7 @@
       });
       html += "</tr>";
     });
-    html += "</table>";
+    html += "</table></div>";
     return html;
   }
 
