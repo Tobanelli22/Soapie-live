@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classifica Girone 1</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: transparent; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: center; }
+  th { background-color: #1a3c6e; color: white; }
+  tr:nth-child(even) { background-color: #f2f2f2; }
+  .updated { font-size: 11px; color: #888; text-align: right; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<div id="girone1">Caricamento...</div>
+<div class="updated" id="lastupdate"></div>
+
+<script>
+  const API_KEY = "AIzaSyADZOK64ObVqJ2Y7OOgkz2tegnTYz83ADg";
+  const SPREADSHEET_ID = "1kk6G2HOui_zVkL5rd68wK65q2qnMp9BNNkB3U54ZwXw";
+  const RANGE = "Classifica_Girone 1!A1:H6";
+
+  function buildTable(values) {
+    if (!values || values.length === 0) return "<p>Nessun dato disponibile.</p>";
+    let html = "<table>";
+    values.forEach((row, i) => {
+      html += "<tr>";
+      row.forEach(cell => {
+        const tag = i === 0 ? "th" : "td";
+        html += `<${tag}>${cell !== undefined ? cell : ""}</${tag}>`;
+      });
+      html += "</tr>";
+    });
+    html += "</table>";
+    return html;
+  }
+
+  async function refresh() {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(RANGE)}?key=${API_KEY}`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.error) {
+        document.getElementById("girone1").innerHTML = `<p style="color:red;">Errore: ${data.error.message}</p>`;
+        return;
+      }
+      document.getElementById("girone1").innerHTML = buildTable(data.values);
+      document.getElementById("lastupdate").textContent = "Ultimo aggiornamento: " + new Date().toLocaleTimeString("it-IT");
+    } catch (err) {
+      document.getElementById("girone1").innerHTML = `<p style="color:red;">Errore di connessione.</p>`;
+    }
+  }
+
+  refresh();
+  setInterval(refresh, 8000);
+</script>
+
+</body>
+</html>
