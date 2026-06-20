@@ -6,23 +6,41 @@
 <title>Vetrina Partite</title>
 <style>
   body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: #FFF0F7; }
+  .search-wrap { margin-bottom: 10px; }
+  .search-wrap input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #E0218A;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    color: #333;
+  }
+  .search-wrap input::placeholder { color: #ffb6d9; }
   .table-wrap { width: 100%; overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; font-size: 14px; }
   th, td { border: 1px solid #ffb6d9; padding: 6px 8px; text-align: center; white-space: nowrap; }
   th { background-color: #E0218A; color: white; }
-  tr:nth-child(even) { background-color: #FFE4F1; }
+  tr:nth-child(even) td { background-color: #FFE4F1; }
+  tr.hidden { display: none; }
   .updated { font-size: 11px; color: #888; text-align: right; margin-top: 6px; }
+  .noresult { text-align: center; color: #E0218A; font-size: 13px; padding: 10px; }
 
   @media (max-width: 480px) {
     body { padding: 2px; font-size: 10px; }
     table { font-size: 9px; }
     th, td { padding: 2px 3px; white-space: normal; word-break: break-word; }
     th:first-child, td:first-child { min-width: 60px; max-width: 80px; }
+    .search-wrap input { font-size: 12px; padding: 6px 10px; }
   }
 </style>
 </head>
 <body>
 
+<div class="search-wrap">
+  <input type="text" id="searchBox" placeholder="🔍 Cerca la tua squadra..." oninput="filterTable()"/>
+</div>
 <div id="vetrina">Caricamento...</div>
 <div class="updated" id="lastupdate"></div>
 
@@ -31,19 +49,43 @@
   const SPREADSHEET_ID = "1kk6G2HOui_zVkL5rd68wK65q2qnMp9BNNkB3U54ZwXw";
   const RANGE = "Vetrina_partite!A1:E31";
 
+  let tableData = [];
+
   function buildTable(values) {
     if (!values || values.length === 0) return "<p>Nessun dato disponibile.</p>";
-    let html = "<div class=\"table-wrap\"><table>";
+    tableData = values;
+    let html = "<div class=\"table-wrap\"><table id=\"mainTable\">";
     values.forEach((row, i) => {
-      html += "<tr>";
-      row.forEach(cell => {
-        const tag = i === 0 ? "th" : "td";
-        html += `<${tag}>${cell !== undefined ? cell : ""}</${tag}>`;
-      });
-      html += "</tr>";
+      if (i === 0) {
+        html += "<thead><tr>";
+        row.forEach(cell => { html += `<th>${cell !== undefined ? cell : ""}</th>`; });
+        html += "</tr></thead><tbody>";
+      } else {
+        html += `<tr>`;
+        row.forEach(cell => { html += `<td>${cell !== undefined ? cell : ""}</td>`; });
+        html += "</tr>";
+      }
     });
-    html += "</table></div>";
+    html += "</tbody></table><div class=\"noresult\" id=\"noresult\" style=\"display:none;\">Nessuna partita trovata per questa squadra.</div></div>";
     return html;
+  }
+
+  function filterTable() {
+    const query = document.getElementById("searchBox").value.toLowerCase().trim();
+    const table = document.getElementById("mainTable");
+    if (!table) return;
+    const rows = table.querySelectorAll("tbody tr");
+    let found = 0;
+    rows.forEach(row => {
+      const text = row.innerText.toLowerCase();
+      if (query === "" || text.includes(query)) {
+        row.classList.remove("hidden");
+        found++;
+      } else {
+        row.classList.add("hidden");
+      }
+    });
+    document.getElementById("noresult").style.display = (found === 0 && query !== "") ? "block" : "none";
   }
 
   async function refresh() {
@@ -55,7 +97,9 @@
         document.getElementById("vetrina").innerHTML = `<p style="color:red;">Errore: ${data.error.message}</p>`;
         return;
       }
+      const query = document.getElementById("searchBox").value;
       document.getElementById("vetrina").innerHTML = buildTable(data.values);
+      if (query) filterTable();
       document.getElementById("lastupdate").textContent = "Ultimo aggiornamento: " + new Date().toLocaleTimeString("it-IT");
     } catch (err) {
       document.getElementById("vetrina").innerHTML = `<p style="color:red;">Errore di connessione.</p>`;
