@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabellone Femminile</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #FFF0F7; padding: 10px; overflow-x: auto; }
+  h2 { text-align: center; color: #E0218A; font-size: 18px; margin-bottom: 14px; letter-spacing: 1px; }
+  .bracket { display: flex; gap: 10px; align-items: flex-start; min-width: 680px; }
+  .round { display: flex; flex-direction: column; gap: 0; flex: 1; }
+  .round-title { text-align: center; font-size: 11px; font-weight: bold; color: #E0218A; background: #ffe4f1; border: 1.5px solid #E0218A; border-radius: 8px; padding: 4px 6px; margin-bottom: 8px; }
+  .match-group { display: flex; flex-direction: column; justify-content: center; }
+  .match { background: #fff; border: 2px solid #E0218A; border-radius: 10px; overflow: hidden; margin: 4px 0; box-shadow: 0 2px 6px rgba(224,33,138,0.15); }
+  .match .time { background: #E0218A; color: white; font-size: 10px; text-align: center; padding: 2px 4px; letter-spacing: 1px; }
+  .team { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; font-size: 12px; min-height: 26px; }
+  .team:first-of-type { border-bottom: 1px solid #ffb6d9; }
+  .team.winner { font-weight: bold; color: #E0218A; }
+  .team .name { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .team .score { min-width: 22px; text-align: center; font-weight: bold; color: #333; background: #FFE4F1; border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+  .team .score.empty { background: transparent; color: transparent; }
+  .finals { display: flex; flex-direction: column; gap: 10px; }
+  .finals .match { border-color: #ff3d8f; }
+  .finals .match .time { background: #ff3d8f; }
+  .updated { text-align: right; font-size: 10px; color: #aaa; margin-top: 8px; }
+  .loading { text-align: center; color: #E0218A; padding: 20px; font-style: italic; }
+</style>
+</head>
+<body>
+<h2>👗 Tabellone Femminile 👗</h2>
+<div id="bracket" class="loading">Caricamento...</div>
+<div class="updated" id="lastupdate"></div>
+
+<script>
+const API_KEY = "AIzaSyADZOK64ObVqJ2Y7OOgkz2tegnTYz83ADg";
+const SPREADSHEET_ID = "1kk6G2HOui_zVkL5rd68wK65q2qnMp9BNNkB3U54ZwXw";
+const RANGE = "Tabellone_femminile_new!A1:G9";
+
+function teamRow(name, score, isWinner) {
+  const sc = score !== '' && score !== null && score !== undefined ? score : '';
+  const scClass = sc === '' ? 'score empty' : 'score';
+  const winClass = isWinner ? 'team winner' : 'team';
+  return `<div class="${winClass}"><span class="name">${name || '...'}</span><span class="${scClass}">${sc}</span></div>`;
+}
+
+function matchCard(orario, t1, g1, g2, t2) {
+  const s1 = g1 !== '' && g1 !== null && g1 !== undefined ? parseInt(g1) : null;
+  const s2 = g2 !== '' && g2 !== null && g2 !== undefined ? parseInt(g2) : null;
+  const w1 = s1 !== null && s2 !== null && s1 > s2;
+  const w2 = s1 !== null && s2 !== null && s2 > s1;
+  const timeHtml = orario ? `<div class="time">${orario}</div>` : '';
+  return `<div class="match">${timeHtml}${teamRow(t1, g1, w1)}${teamRow(t2, g2, w2)}</div>`;
+}
+
+function buildBracket(rows) {
+  const data = {};
+  rows.slice(1).forEach(r => {
+    const fase = (r[1]||'').trim().toUpperCase();
+    const num = parseInt(r[2])||0;
+    if (!data[fase]) data[fase]=[];
+    data[fase].push({ orario:r[0]||'', fase, num, t1:r[3]||'', g1:r[4], g2:r[5], t2:r[6]||'' });
+  });
+
+  const qua = (data['QUARTI']||[]).sort((a,b)=>a.num-b.num);
+  const sem = (data['SEMIFINALE']||[]).sort((a,b)=>a.num-b.num);
+  const f34 = (data['FINALE 3-4']||[])[0];
+  const f12 = (data['FINALE 1-2']||[])[0];
+
+  let html = '<div class="bracket">';
+
+  // QUARTI
+  html += '<div class="round"><div class="round-title">QUARTI</div>';
+  qua.forEach(m => { html += `<div class="match-group" style="margin:10px 0;">${matchCard(m.orario,m.t1,m.g1,m.g2,m.t2)}</div>`; });
+  html += '</div>';
+
+  // SEMIFINALI
+  html += '<div class="round"><div class="round-title">SEMIFINALI</div>';
+  sem.forEach(m => { html += `<div class="match-group" style="margin:40px 0;">${matchCard(m.orario,m.t1,m.g1,m.g2,m.t2)}</div>`; });
+  html += '</div>';
+
+  // FINALI
+  html += '<div class="round"><div class="round-title">FINALI</div><div class="finals">';
+  if (f12) html += `<div><div style="font-size:10px;color:#E0218A;text-align:center;margin-bottom:2px;">🥇 FINALE 1°-2°</div>${matchCard(f12.orario,f12.t1,f12.g1,f12.g2,f12.t2)}</div>`;
+  if (f34) html += `<div><div style="font-size:10px;color:#E0218A;text-align:center;margin-bottom:2px;">🥉 FINALE 3°-4°</div>${matchCard(f34.orario,f34.t1,f34.g1,f34.g2,f34.t2)}</div>`;
+  html += '</div></div>';
+
+  html += '</div>';
+  return html;
+}
+
+async function refresh() {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(RANGE)}?key=${API_KEY}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.error) { document.getElementById('bracket').innerHTML = `<p style="color:red">${data.error.message}</p>`; return; }
+    document.getElementById('bracket').innerHTML = buildBracket(data.values || []);
+    document.getElementById('lastupdate').textContent = 'Aggiornato: ' + new Date().toLocaleTimeString('it-IT');
+  } catch(e) {
+    document.getElementById('bracket').innerHTML = '<p style="color:red">Errore connessione.</p>';
+  }
+}
+
+refresh();
+setInterval(refresh, 8000);
+</script>
+</body>
+</html>
