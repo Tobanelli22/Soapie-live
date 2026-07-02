@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabellone Torneo Live</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --border-color: #334155;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            margin: 0;
+        }
+        h2 { text-align: center; color: var(--accent-color); margin-top: 40px; text-transform: uppercase; letter-spacing: 1px;}
+        .bracket {
+            display: flex; justify-content: center; align-items: center; gap: 30px; overflow-x: auto; padding: 20px;
+        }
+        .round { display: flex; flex-direction: column; justify-content: space-around; height: 620px; min-width: 180px; }
+        .round-f { height: 340px; } 
+        .matchup {
+            display: flex; flex-direction: column; background-color: var(--card-bg);
+            border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        .match-info { font-size: 10px; color: #94a3b8; background: rgba(0,0,0,0.2); padding: 2px 8px; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .team { padding: 10px 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .team:last-child { border-bottom: none; }
+        .score { font-weight: bold; background: #334155; padding: 2px 6px; border-radius: 4px; min-width: 15px; text-align: center; }
+        .final-title { font-size: 11px; text-transform: uppercase; text-align: center; background: #475569; padding: 4px 0; color: #fff; font-weight: bold;}
+        .finals-round { display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>🏆 Torneo Maschile</h2>
+    <div class="bracket">
+        <div class="round">
+            <div class="matchup" id="m-ottavi1"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-ottavi2"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-ottavi3"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-ottavi4"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-ottavi5"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-ottavi6"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-ottavi7"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-ottavi8"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+        </div>
+        <div class="round">
+            <div class="matchup" id="m-quarti1"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-quarti2"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-quarti3"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-quarti4"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+        </div>
+        <div class="round">
+            <div class="matchup" id="m-semi1"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="m-semi2"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+        </div>
+        <div class="round finals-round">
+            <div>
+                <div class="final-title">Finale 1°/2° Posto</div>
+                <div class="matchup" id="m-finale12"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            </div>
+            <div>
+                <div class="final-title">Finale 3°/4° Posto</div>
+                <div class="matchup" id="m-finale34"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <hr style="border-color: var(--border-color); margin: 50px 0;">
+
+    <h2>🏆 Torneo Femminile</h2>
+    <div class="bracket">
+        <div class="round round-f">
+            <div class="matchup" id="f-quarti1"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="f-quarti2"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="f-quarti3"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="f-quarti4"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+        </div>
+        <div class="round round-f">
+            <div class="matchup" id="f-semi1"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            <div class="matchup" id="f-semi2"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+        </div>
+        <div class="round round-f finals-round">
+            <div>
+                <div class="final-title">Finale 1°/2° Posto</div>
+                <div class="matchup" id="f-finale12"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            </div>
+            <div>
+                <div class="final-title">Finale 3°/4° Posto</div>
+                <div class="matchup" id="f-finale34"><div class="match-info"></div><div class="team">.. <span class="score">-</span></div><div class="team">.. <span class="score">-</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SOSTITUISCI IL TESTO TRA APICI CON IL TUO ID DI GOOGLE FOGLI
+        const SPREADSHEET_ID = '1kk6G2HOui_zVkL5rd68wK65q2qnMp9BNNkB3U54ZwXw';
+
+        const URL_M = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?sheet=Tabellone_maschile`;
+        const URL_F = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?sheet=Tabellone_femminile`;
+
+        async function leggiFoglio(url, prefissoID) {
+            try {
+                let r = await fetch(url);
+                let t = await r.text();
+                let json = JSON.parse(t.substr(47).slice(0, -2));
+                let righe = json.table.rows;
+
+                righe.forEach(riga => {
+                    if(!riga.c || riga.c.length < 7) return;
+                    
+                    let orario   = riga.c[0] ? riga.c[0].v : '';
+                    let partita  = riga.c[2] ? riga.c[2].v : '';
+                    let squadra1 = riga.c[3] ? riga.c[3].v : 'Da definire';
+                    let gol1     = riga.c[4] && riga.c[4].v !== null ? riga.c[4].v : '-';
+                    let gol2     = riga.c[5] && riga.c[5].v !== null ? riga.c[5].v : '-';
+                    let squadra2 = riga.c[6] ? riga.c[6].v : 'Da definire';
+
+                    let bloccoMatch = document.getElementById(`${prefissoID}-${partita}`);
+                    if(bloccoMatch) {
+                        bloccoMatch.querySelector('.match-info').innerText = orario ? `Ore: ${orario}` : 'Da disputare';
+                        let teamBlocks = bloccoMatch.querySelectorAll('.team');
+                        teamBlocks[0].innerHTML = `${squadra1} <span class="score">${gol1}</span>`;
+                        teamBlocks[1].innerHTML = `${squadra2} <span class="score">${gol2}</span>`;
+                    }
+                });
+            } catch (e) { console.error("Errore:", e); }
+        }
+
+        window.onload = function() {
+            leggiFoglio(URL_M, 'm');
+            leggiFoglio(URL_F, 'f');
+        };
+    </script>
+</body>
+</html>
